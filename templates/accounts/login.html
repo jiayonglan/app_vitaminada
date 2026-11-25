@@ -1,0 +1,15 @@
+{% extends "accounts/auth_base.html" %}
+{% block auth_page_title %}Iniciar sesión{% endblock %}
+{% block auth_title %}Iniciar sesión{% endblock %}
+{% block auth_intro %}Accede para comentar y dar me gusta a las publicaciones.{% endblock %}
+{% block auth_body %}
+<form class="form" method="post" novalidate data-validate>
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ next }}">
+  {% include "partials/form_errors.html" %}
+  {% for field in form %}{% include "partials/field.html" %}{% endfor %}
+  <div class="auth-links"><a class="link" href="{% url 'accounts:password_reset' %}">¿Has olvidado la contraseña?</a></div>
+  <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+</form>
+{% endblock %}
+{% block auth_alt %}<p class="auth-alt">¿No tienes cuenta? <a href="{% url 'accounts:register' %}">Crear cuenta</a></p>{% endblock %}

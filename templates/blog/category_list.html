@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Categorías · {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <header class="page-header">
+    <h1>Categorías</h1>
+    <p class="lead">Elige un tema y empieza a leer.</p>
+  </header>
+  {% if categories %}
+    <div class="grid grid--4">
+      {% for c in categories %}
+      <a class="category-card" href="{% url 'blog:list' %}?categoria={{ c.slug }}">
+        <h2 style="font-size: var(--fs-h4); font-weight: 600">{{ c.name }}</h2>
+        {% if c.description %}<p>{{ c.description }}</p>{% endif %}
+        <span class="count">{{ c.total }} publicacion{{ c.total|pluralize:"es" }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty"><h3>No hay categorías</h3><p>Cuando se creen categorías podrás explorarlas desde aquí.</p></div>
+  {% endif %}
+</div>
+<div style="height: var(--section-y)"></div>
+{% endblock %}

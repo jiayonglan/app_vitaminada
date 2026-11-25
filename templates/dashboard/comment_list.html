@@ -1,0 +1,37 @@
+{% extends "dashboard/base.html" %}
+{% load ui %}
+{% block title %}Comentarios{% endblock %}
+{% block crumbs %}<li aria-current="page">Comentarios</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Comentarios</h1></div>
+<nav class="tabs" aria-label="Estado del comentario">
+  <a class="chip" href="?estado=pending"{% if status == "pending" %} aria-current="true"{% endif %}>Pendientes <span class="tabular">(<span data-count="pending">{{ counts.pending }}</span>)</span></a>
+  <a class="chip" href="?estado=approved"{% if status == "approved" %} aria-current="true"{% endif %}>Aprobados <span class="tabular">(<span data-count="approved">{{ counts.approved }}</span>)</span></a>
+  <a class="chip" href="?estado=rejected"{% if status == "rejected" %} aria-current="true"{% endif %}>Rechazados <span class="tabular">(<span data-count="rejected">{{ counts.rejected }}</span>)</span></a>
+</nav>
+{% if page.object_list %}
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr><th scope="col">Comentario</th><th scope="col">Autor</th><th scope="col">Publicación</th><th scope="col">Fecha</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+    <tbody>
+      {% for c in page.object_list %}
+      <tr>
+        <td style="max-width: 360px; overflow-wrap: anywhere">{{ c.content|truncatechars:160 }}{% if c.parent_id %} <span class="badge badge--muted">Respuesta</span>{% endif %}</td>
+        <td>{{ c.user|display_name }}</td>
+        <td><a class="link" href="{{ c.post.get_absolute_url }}#comentarios">{{ c.post.title|truncatechars:32 }}</a></td>
+        <td><time datetime="{{ c.created_at|date:'c' }}">{{ c.created_at|date:"j M Y, H:i" }}</time></td>
+        <td><div class="row-actions">
+          {% if c.status != "approved" %}<form method="post" action="{% url 'dashboard:comment_approve' c.pk %}" class="inline-form" data-ajax-row>{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-ghost btn-sm" type="submit"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-check"/></svg>Aprobar<span class="sr-only"> comentario de {{ c.user|display_name }}</span></button></form>{% endif %}
+          {% if c.status != "rejected" %}<form method="post" action="{% url 'dashboard:comment_reject' c.pk %}" class="inline-form" data-ajax-row>{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-ghost btn-sm" type="submit"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-x"/></svg>Rechazar<span class="sr-only"> comentario de {{ c.user|display_name }}</span></button></form>{% endif %}
+          <form method="post" action="{% url 'dashboard:comment_delete' c.pk %}" class="inline-form" data-ajax-row data-confirm="Se eliminará el comentario y sus respuestas. Esta acción no se puede deshacer." data-confirm-title="¿Eliminar comentario?" data-confirm-label="Eliminar">{% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-danger-ghost btn-sm" type="submit"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-trash"/></svg>Eliminar<span class="sr-only"> comentario de {{ c.user|display_name }}</span></button></form>
+        </div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/pagination.html" %}
+{% else %}
+<div class="empty"><h3>No hay comentarios {% if status == "pending" %}pendientes{% elif status == "approved" %}aprobados{% else %}rechazados{% endif %}</h3><p>Cuando haya comentarios en este estado los verás aquí.</p></div>
+{% endif %}
+{% endblock %}

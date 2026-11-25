@@ -1,0 +1,12 @@
+{% load ui %}
+<li class="comment-item" data-comment-id="{{ comment.id }}" data-created="{{ comment.created_at|date:'U' }}">
+  <article class="comment">
+    <span class="avatar" aria-hidden="true">{{ comment.user|initials }}</span>
+    <div>
+      <div class="comment-head"><strong>{{ comment.user|display_name }}</strong><time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"j M Y, H:i" }}</time></div>
+      <p class="comment-text">{{ comment.content }}</p>
+      {% if not is_reply and user.is_authenticated %}<button type="button" class="comment-reply-btn" data-reply-to="{{ comment.id }}" data-reply-name="{{ comment.user|display_name }}">Responder</button>{% endif %}
+      {% if not is_reply %}<ul class="comment-replies">{% for reply in comment.reply_list %}{% include "comments/_comment.html" with comment=reply is_reply=True %}{% endfor %}</ul>{% endif %}
+    </div>
+  </article>
+</li>

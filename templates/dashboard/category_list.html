@@ -1,0 +1,32 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Categorías{% endblock %}
+{% block crumbs %}<li aria-current="page">Categorías</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Categorías</h1><a class="btn btn-primary" href="{% url 'dashboard:category_create' %}"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Nueva categoría</a></div>
+{% if categories %}
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr><th scope="col">Nombre</th><th scope="col">Descripción</th><th scope="col" class="num">Publicaciones</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+    <tbody>
+      {% for c in categories %}
+      <tr>
+        <td class="row-title">{{ c.name }}</td>
+        <td class="text-secondary">{{ c.description|default:"—" }}</td>
+        <td class="num">{{ c.total }}</td>
+        <td><div class="row-actions">
+          <a class="btn btn-ghost btn-sm" href="{% url 'dashboard:category_update' c.pk %}"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-edit"/></svg>Editar<span class="sr-only"> {{ c.name }}</span></a>
+          {% if c.total == 0 %}
+            {% url 'dashboard:category_delete' c.pk as del_url %}
+            {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar categoría?" text="Se eliminará la categoría. Esta acción no se puede deshacer." name=c.name %}
+          {% endif %}
+        </div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="help">Solo se pueden eliminar categorías sin publicaciones asociadas.</p>
+{% else %}
+<div class="empty"><h3>No hay categorías</h3><p>Crea la primera para poder organizar las publicaciones.</p><a class="btn btn-primary" href="{% url 'dashboard:category_create' %}">Nueva categoría</a></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,15 @@
+{% load ui %}
+<article class="card{% if row %} card--row{% endif %}">
+  <div class="card-media">{% if post.image %}<img src="{{ post.image.url }}" alt="" width="1200" height="675" loading="lazy" decoding="async">{% endif %}</div>
+  <div class="card-body">
+    <div class="card-badges"><a class="badge" href="{% url 'blog:list' %}?categoria={{ post.category.slug }}">{{ post.category.name }}</a></div>
+    <h3 class="card-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <p class="card-summary">{{ post.summary }}</p>
+    {% if cta %}<span class="card-link">Leer publicación <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></span>{% endif %}
+    <div class="card-meta">
+      <span class="meta-item">{{ post.author|display_name }}</span>
+      <time datetime="{{ post.published_at|date:'Y-m-d' }}">{{ post.published_at|date:"j M Y" }}</time>
+      <span class="meta-item"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="tabular">{{ post.likes_total }}</span><span class="sr-only"> me gusta</span></span>
+    </div>
+  </div>
+</article>

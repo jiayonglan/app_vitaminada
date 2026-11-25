@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Blog{% if current_category %} · {{ current_category.name }}{% endif %}{% if q %} · «{{ q }}»{% endif %} · {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <header class="page-header">
+    <h1>Blog</h1>
+    <p class="lead">Artículos sobre desarrollo web, diseño y buenas prácticas.</p>
+  </header>
+
+  <form class="search-form filters-search" role="search" method="get" action="{% url 'blog:list' %}" data-live-form>
+    <label class="sr-only" for="blog-search">Buscar por título o contenido</label>
+    <input class="input" id="blog-search" type="search" name="q" value="{{ q }}" placeholder="Buscar por título o contenido" autocomplete="off">
+    <input type="hidden" name="categoria" value="{{ current_category.slug|default:'' }}">
+    <button class="btn btn-primary" type="submit">Buscar</button>
+  </form>
+  <p class="sr-only" role="status" data-live-status></p>
+
+  <div class="filters" data-live-region data-count="{{ page.paginator.count }}" tabindex="-1" aria-busy="false">
+    <nav aria-label="Filtrar por categoría">
+      <div class="chip-list">
+        <a class="chip" href="{% url 'blog:list' %}{% if q %}?q={{ q|urlencode }}{% endif %}"{% if not current_category %} aria-current="true"{% endif %}>Todas</a>
+        {% for c in categories %}
+          <a class="chip" href="?categoria={{ c.slug }}{% if q %}&amp;q={{ q|urlencode }}{% endif %}"{% if current_category.pk == c.pk %} aria-current="true"{% endif %}>{{ c.name }}</a>
+        {% endfor %}
+      </div>
+    </nav>
+    {% if has_filters %}
+    <p class="results-note">
+      {{ page.paginator.count }} resultado{{ page.paginator.count|pluralize }}
+      {% if q %}para «{{ q }}»{% endif %}{% if current_category %} en {{ current_category.name }}{% endif %}.
+      <a class="link" href="{% url 'blog:list' %}" data-live-link>Limpiar filtros</a>
+    </p>
+    {% endif %}
+    <div data-live-results>
+      {% if page.object_list %}
+        <div class="grid grid--3">{% for p in page.object_list %}{% include "partials/post_card.html" with post=p %}{% endfor %}</div>
+        {% include "partials/pagination.html" %}
+      {% else %}
+        <div class="empty">
+          <h3>{% if has_filters %}No hay resultados{% else %}Todavía no hay publicaciones{% endif %}</h3>
+          <p>{% if has_filters %}Prueba con otras palabras o quita algún filtro.{% else %}Cuando se publique la primera entrada aparecerá aquí.{% endif %}</p>
+          {% if has_filters %}<a class="btn btn-secondary" href="{% url 'blog:list' %}" data-live-link>Limpiar filtros</a>{% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<div style="height: var(--section-y)"></div>
+{% endblock %}

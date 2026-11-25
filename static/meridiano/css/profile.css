@@ -1,0 +1,19 @@
+/* Autenticación */
+.auth-shell { display: grid; place-items: center; padding-block: var(--space-16); }
+.auth-card { width: min(100%, 460px); padding: var(--space-10); border: 1px solid var(--border-default); border-radius: var(--radius); background: var(--surface-base); box-shadow: var(--shadow-md); }
+.auth-card h1 { font-size: var(--fs-h3); margin-bottom: var(--space-2); }
+.auth-card > p { color: var(--text-secondary); margin-bottom: var(--space-6); }
+.auth-alt { margin-top: var(--space-6); text-align: center; font-size: var(--fs-sm); color: var(--text-secondary); }
+.auth-alt a { color: var(--accent); font-weight: 500; }
+.auth-links { display: flex; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; font-size: var(--fs-sm); }
+
+/* Perfil */
+.profile-head { display: flex; align-items: center; gap: var(--space-6); padding-block: var(--space-12) var(--space-8); flex-wrap: wrap; }
+.profile-head h1 { font-size: var(--fs-h3); }
+.profile-head p { color: var(--text-secondary); }
+.profile-head .actions { margin-left: auto; display: flex; gap: var(--space-3); flex-wrap: wrap; }
+.profile-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); padding-bottom: var(--space-16); }
+.profile-grid .panel--wide { grid-column: 1 / -1; }
+.info-list { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-6); font-size: var(--fs-sm); }
+.info-list dt { color: var(--text-muted); }
+.info-list dd { color: var(--text-primary); }

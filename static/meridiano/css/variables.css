@@ -1,0 +1,65 @@
+/* Tokens del sistema de diseño (inspirado en apple-ui-skills, MIT) */
+:root {
+  /* Color: 10 tokens principales */
+  --surface-base: #ffffff;
+  --surface-raised: #f5f7fa;
+  --accent: #155bd0;
+  --accent-hover: #0f4fbf;
+  --text-primary: #2d2b30;
+  /* #6D89B5 solo da 3.5:1 sobre blanco. Se oscurece a #4A6A96 (5.5:1) para texto.
+     El tono original queda como --accent-soft, solo para elementos decorativos. */
+  --text-secondary: #4a6a96;
+  --accent-soft: #6d89b5;
+  --text-muted: #707070;
+  --border-default: #b5c7d8;
+  --success: #16804a;
+  --danger: #d92d20;
+
+  /* Derivados (mezclas de los tokens anteriores, sin colores nuevos) */
+  --accent-tint: color-mix(in srgb, var(--accent) 8%, white);
+  --danger-tint: color-mix(in srgb, var(--danger) 7%, white);
+  --success-tint: color-mix(in srgb, var(--success) 8%, white);
+  --border-input: color-mix(in srgb, var(--border-default) 35%, var(--text-secondary));
+
+  /* Tipografía */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --fs-h1: clamp(2.125rem, 1.4rem + 3vw, 3.1875rem);   /* 51px */
+  --fs-h2: clamp(1.75rem, 1.3rem + 2vw, 2.6875rem);    /* 43px */
+  --fs-h3: clamp(1.375rem, 1.15rem + 1vw, 2rem);       /* 32px */
+  --fs-h4: clamp(1.1875rem, 1.05rem + 0.6vw, 1.625rem);/* 26px */
+  --fs-lead: clamp(1.125rem, 1rem + 0.7vw, 1.6875rem); /* 27px */
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-caption: 0.75rem;
+  --fs-label: 0.625rem;
+
+  /* Espaciado: cuadrícula de 4px */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* Bordes y sombras */
+  --radius: 21px;
+  --radius-sm: 21px; /* la skill solo admite la escala de 21px */
+  --radius-pill: 999px;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.06);
+
+  /* Layout */
+  --container: 1200px;
+  --reading: 680px;
+  --header-h: 68px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --section-y: clamp(48px, 8vw, 80px);
+
+  /* Movimiento */
+  --t-fast: 150ms ease-out;
+}

@@ -1,0 +1,44 @@
+{% extends "dashboard/base.html" %}
+{% load ui %}
+{% block title %}Resumen{% endblock %}
+{% block crumbs %}<li aria-current="page">Resumen</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Resumen</h1><a class="btn btn-primary" href="{% url 'dashboard:post_create' %}"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Nueva publicación</a></div>
+
+<section aria-label="Estadísticas">
+  <div class="stat-grid">
+    {% for label, value, url in stats %}
+    <a class="stat-card{% if label == 'Comentarios pendientes' and value %} stat-card--alert{% endif %}" href="{% url url %}">
+      <span class="stat-label">{{ label }}</span><span class="stat-value">{{ value }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<div class="dash-grid">
+  <section class="panel" aria-labelledby="bycat-title">
+    <h2 id="bycat-title">Publicaciones por categoría</h2>
+    {% if by_category %}
+    <ul class="bar-list">
+      {% for c in by_category %}
+      <li class="bar-row"><div><span>{{ c.name }}</span><span class="tabular">{{ c.total }}</span></div><div class="bar-track" aria-hidden="true"><div class="bar-fill" style="width: {{ c.percent }}%"></div></div></li>
+      {% endfor %}
+    </ul>
+    <p class="text-sm text-muted" style="margin-top: var(--space-4)">Me gusta recibidos en total: <span class="tabular">{{ likes_total }}</span></p>
+    {% else %}<p class="text-secondary">Crea categorías y publicaciones para ver su distribución.</p>{% endif %}
+  </section>
+  <section class="panel" aria-labelledby="latest-title">
+    <h2 id="latest-title">Últimos comentarios</h2>
+    {% if latest_comments %}
+    <ul class="list-plain">
+      {% for c in latest_comments %}
+      <li><strong>{{ c.user|display_name }}</strong> en <a class="link" href="{{ c.post.get_absolute_url }}">{{ c.post.title|truncatechars:38 }}</a>
+        <p class="text-sm text-secondary">{{ c.content|truncatechars:80 }}</p>
+        <span class="badge {% if c.status == 'approved' %}badge--success{% elif c.status == 'rejected' %}badge--danger{% else %}badge--muted{% endif %}">{{ c.get_status_display }}</span></li>
+      {% endfor %}
+    </ul>
+    {% else %}<p class="text-secondary">Aún no hay comentarios.</p>{% endif %}
+    {% if unread %}<p style="margin-top: var(--space-4)"><a class="link" href="{% url 'dashboard:messages' %}">Tienes {{ unread }} mensaje{{ unread|pluralize }} sin leer</a></p>{% endif %}
+  </section>
+</div>
+{% endblock %}

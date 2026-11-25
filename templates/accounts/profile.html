@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}Mi perfil · {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <header class="profile-head">
+    <span class="avatar avatar--lg" aria-hidden="true">{{ user|initials }}</span>
+    <div><h1>{{ user|display_name }}</h1><p>{{ user.email }}</p></div>
+    <div class="actions">
+      <a class="btn btn-primary" href="{% url 'accounts:profile_edit' %}">Editar perfil</a>
+      <a class="btn btn-secondary" href="{% url 'accounts:password_change' %}">Cambiar contraseña</a>
+    </div>
+  </header>
+  <div class="profile-grid">
+    <section class="panel panel--wide" aria-labelledby="info-title">
+      <h2 id="info-title">Información</h2>
+      <dl class="info-list">
+        <dt>Nombre</dt><dd>{{ user.first_name|default:"Sin indicar" }}</dd>
+        <dt>Apellidos</dt><dd>{{ user.last_name|default:"Sin indicar" }}</dd>
+        <dt>Correo</dt><dd>{{ user.email }}</dd>
+        <dt>Miembro desde</dt><dd>{{ user.date_joined|date:"j \d\e F \d\e Y" }}</dd>
+      </dl>
+    </section>
+    <section class="panel" aria-labelledby="mc-title">
+      <h2 id="mc-title">Mis comentarios</h2>
+      {% if comments %}
+      <ul class="list-plain">
+        {% for c in comments %}
+        <li>
+          <a class="link" href="{{ c.post.get_absolute_url }}#comentarios">{{ c.post.title }}</a>
+          <p class="text-sm" style="margin-top: var(--space-1)">{{ c.content|truncatechars:110 }}</p>
+          <span class="badge {% if c.status == 'approved' %}badge--success{% elif c.status == 'rejected' %}badge--danger{% else %}badge--muted{% endif %}" style="margin-top: var(--space-2)">{{ c.get_status_display }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="text-secondary">Todavía no has comentado ninguna publicación.</p>{% endif %}
+    </section>
+    <section class="panel" aria-labelledby="ml-title">
+      <h2 id="ml-title">Mis me gusta</h2>
+      {% if likes %}
+      <ul class="list-plain">
+        {% for l in likes %}<li><a class="link" href="{{ l.post.get_absolute_url }}">{{ l.post.title }}</a><p class="text-sm text-muted">{{ l.post.category.name }}</p></li>{% endfor %}
+      </ul>
+      {% else %}<p class="text-secondary">Aún no has dado me gusta a ninguna publicación.</p>{% endif %}
+    </section>
+    {% if user.is_staff %}
+    <section class="panel panel--wide" aria-labelledby="mp-title">
+      <h2 id="mp-title">Mis publicaciones</h2>
+      {% if my_posts %}
+      <ul class="list-plain">
+        {% for p in my_posts %}<li><a class="link" href="{{ p.get_absolute_url }}">{{ p.title }}</a> <span class="badge badge--muted">{{ p.get_status_display }}</span></li>{% endfor %}
+      </ul>
+      {% else %}<p class="text-secondary">No has creado publicaciones.</p>{% endif %}
+      <p style="margin-top: var(--space-4)"><a class="btn btn-secondary btn-sm" href="{% url 'dashboard:post_create' %}">Nueva publicación</a></p>
+    </section>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

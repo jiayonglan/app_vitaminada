@@ -1,0 +1,18 @@
+{% extends "accounts/auth_base.html" %}
+{% block auth_page_title %}Crear cuenta{% endblock %}
+{% block auth_title %}Crear cuenta{% endblock %}
+{% block auth_intro %}Es gratis y solo te llevará un minuto.{% endblock %}
+{% block auth_body %}
+<form class="form" method="post" novalidate data-validate>
+  {% csrf_token %}
+  {% include "partials/form_errors.html" %}
+  {% for field in form %}{% include "partials/field.html" %}{% endfor %}
+  <ul class="strength list-reset" data-strength aria-label="Requisitos de la contraseña">
+    <li data-rule="length">Al menos 8 caracteres</li>
+    <li data-rule="notnumeric">No puede ser solo números</li>
+    <li data-rule="match">Las dos contraseñas coinciden</li>
+  </ul>
+  <button class="btn btn-primary btn-block" type="submit">Crear cuenta</button>
+</form>
+{% endblock %}
+{% block auth_alt %}<p class="auth-alt">¿Ya tienes cuenta? <a href="{% url 'accounts:login' %}">Iniciar sesión</a></p>{% endblock %}

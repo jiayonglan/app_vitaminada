@@ -1,0 +1,19 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ msg.subject }}{% endblock %}
+{% block crumbs %}<li><a href="{% url 'dashboard:messages' %}">Mensajes</a></li><li aria-current="page">{{ msg.subject|truncatechars:40 }}</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>{{ msg.subject }}</h1><a class="btn btn-secondary" href="{% url 'dashboard:messages' %}">Volver a la bandeja</a></div>
+<article class="panel admin-form">
+  <dl class="info-list" style="margin-bottom: var(--space-6)">
+    <dt>De</dt><dd>{{ msg.name }}</dd>
+    <dt>Correo</dt><dd><a class="link" href="mailto:{{ msg.email }}">{{ msg.email }}</a></dd>
+    <dt>Fecha</dt><dd>{{ msg.created_at|date:"j \d\e F \d\e Y, H:i" }}</dd>
+  </dl>
+  <p class="message-body">{{ msg.message }}</p>
+  <div class="form-actions" style="margin-top: var(--space-8)">
+    <a class="btn btn-primary" href="mailto:{{ msg.email }}?subject=Re:%20{{ msg.subject|urlencode }}">Responder por correo</a>
+    {% url 'dashboard:message_delete' msg.pk as del_url %}
+    {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar mensaje?" text="Se eliminará el mensaje. Esta acción no se puede deshacer." name=msg.subject %}
+  </div>
+</article>
+{% endblock %}

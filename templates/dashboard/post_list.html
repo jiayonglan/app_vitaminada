@@ -1,0 +1,41 @@
+{% extends "dashboard/base.html" %}
+{% load ui %}
+{% block title %}Publicaciones{% endblock %}
+{% block crumbs %}<li aria-current="page">Publicaciones</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Publicaciones</h1><a class="btn btn-primary" href="{% url 'dashboard:post_create' %}"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Nueva publicación</a></div>
+<form class="toolbar" method="get" role="search" data-clean-params>
+  <div class="search-form"><label class="sr-only" for="q">Buscar publicaciones</label><input class="input" id="q" type="search" name="q" value="{{ q }}" placeholder="Buscar por título o resumen"><button class="btn btn-secondary" type="submit">Buscar</button></div>
+  <label class="sr-only" for="estado">Estado</label>
+  <select class="input select" id="estado" name="estado" data-autosubmit><option value="">Todos los estados</option><option value="published"{% if status == "published" %} selected{% endif %}>Publicadas</option><option value="draft"{% if status == "draft" %} selected{% endif %}>Borradores</option></select>
+  <label class="sr-only" for="categoria">Categoría</label>
+  <select class="input select" id="categoria" name="categoria" data-autosubmit><option value="">Todas las categorías</option>{% for c in categories %}<option value="{{ c.slug }}"{% if cat == c.slug %} selected{% endif %}>{{ c.name }}</option>{% endfor %}</select>
+</form>
+{% if page.object_list %}
+<div class="table-wrap">
+  <table class="table" data-sortable>
+    <thead><tr><th scope="col" data-sort="text">Título</th><th scope="col" data-sort="text">Categoría</th><th scope="col" data-sort="text">Autor</th><th scope="col" data-sort="text">Estado</th><th scope="col" data-sort="num">Fecha</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+    <tbody>
+      {% for p in page.object_list %}
+      <tr>
+        <td class="row-title">{{ p.title }}{% if p.is_featured %} <span class="badge">Destacada</span>{% endif %}</td>
+        <td>{{ p.category.name }}</td>
+        <td>{{ p.author|display_name }}</td>
+        <td><span class="badge {% if p.status == 'published' %}badge--success{% else %}badge--muted{% endif %}">{{ p.get_status_display }}</span></td>
+        <td data-sort-value="{{ p.published_at|date:'U' }}"><time datetime="{{ p.published_at|date:'Y-m-d' }}">{{ p.published_at|date:"j M Y" }}</time></td>
+        <td><div class="row-actions">
+          {% if p.status == 'published' %}<a class="btn btn-ghost btn-sm" href="{{ p.get_absolute_url }}">Ver<span class="sr-only"> {{ p.title }}</span></a>{% endif %}
+          <a class="btn btn-ghost btn-sm" href="{% url 'dashboard:post_update' p.pk %}"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-edit"/></svg>Editar<span class="sr-only"> {{ p.title }}</span></a>
+          {% url 'dashboard:post_delete' p.pk as del_url %}
+          {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar publicación?" text="Se eliminará esta publicación junto con sus comentarios y me gusta. Esta acción no se puede deshacer." name=p.title %}
+        </div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/pagination.html" %}
+{% else %}
+<div class="empty"><h3>No hay publicaciones</h3><p>No se encontró ninguna con estos filtros. Crea una nueva o cambia la búsqueda.</p><a class="btn btn-primary" href="{% url 'dashboard:post_create' %}">Nueva publicación</a></div>
+{% endif %}
+{% endblock %}

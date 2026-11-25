@@ -1,0 +1,31 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Mensajes{% endblock %}
+{% block crumbs %}<li aria-current="page">Mensajes</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Mensajes</h1></div>
+{% if page.object_list %}
+<div class="table-wrap">
+  <table class="table">
+    <thead><tr><th scope="col">Remitente</th><th scope="col">Asunto</th><th scope="col">Fecha</th><th scope="col">Estado</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+    <tbody>
+      {% for m in page.object_list %}
+      <tr{% if not m.is_read %} class="is-unread"{% endif %}>
+        <td><div class="row-title">{{ m.name }}</div><div class="text-muted">{{ m.email }}</div></td>
+        <td><a class="link" href="{% url 'dashboard:message_detail' m.pk %}">{{ m.subject }}</a></td>
+        <td><time datetime="{{ m.created_at|date:'c' }}">{{ m.created_at|date:"j M Y, H:i" }}</time></td>
+        <td><span class="badge {% if m.is_read %}badge--muted{% endif %}">{% if m.is_read %}Leído{% else %}Sin leer{% endif %}</span></td>
+        <td><div class="row-actions">
+          <a class="btn btn-ghost btn-sm" href="{% url 'dashboard:message_detail' m.pk %}">Abrir<span class="sr-only"> {{ m.subject }}</span></a>
+          {% url 'dashboard:message_delete' m.pk as del_url %}
+          {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar mensaje?" text="Se eliminará el mensaje. Esta acción no se puede deshacer." name=m.subject ajax=True %}
+        </div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/pagination.html" %}
+{% else %}
+<div class="empty"><h3>La bandeja está vacía</h3><p>Los mensajes enviados desde el formulario de contacto aparecerán aquí.</p></div>
+{% endif %}
+{% endblock %}

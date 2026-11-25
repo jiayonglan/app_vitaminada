@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load ui %}
+{% block title %}{{ post.title }} · {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ post.summary }}{% endblock %}
+
+{% block content %}
+<div class="read-progress" hidden aria-hidden="true"><div class="read-progress-bar" data-read-progress></div></div>
+<article>
+  <div class="container container--narrow">
+    <header class="post-header">
+      <nav class="breadcrumbs" aria-label="Migas de pan" style="margin-bottom: var(--space-6)">
+        <ol><li><a href="{% url 'blog:list' %}">Blog</a></li><li><a href="{% url 'blog:list' %}?categoria={{ post.category.slug }}">{{ post.category.name }}</a></li></ol>
+      </nav>
+      <a class="badge" href="{% url 'blog:list' %}?categoria={{ post.category.slug }}">{{ post.category.name }}</a>
+      <h1>{{ post.title }}</h1>
+      <p class="lead">{{ post.summary }}</p>
+      <div class="post-meta">
+        <span class="author"><span class="avatar" aria-hidden="true">{{ post.author|initials }}</span>{{ post.author|display_name }}</span>
+        <time datetime="{{ post.published_at|date:'Y-m-d' }}">{{ post.published_at|date:"j \d\e F \d\e Y" }}</time>
+        <span class="meta-item"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg><span class="tabular" data-like-total>{{ post.likes_total }}</span> me gusta</span>
+        <span class="meta-item"><svg class="icon" aria-hidden="true"><use href="#i-comment"/></svg><span class="tabular">{{ comment_total }}</span> comentarios</span>
+        <span class="meta-item" data-reading-time hidden></span>
+      </div>
+    </header>
+  </div>
+
+  {% if post.image %}
+  <div class="post-cover"><img src="{{ post.image.url }}" alt="Imagen de portada: {{ post.title }}" width="1200" height="675" fetchpriority="high"></div>
+  {% endif %}
+
+  <div class="container container--narrow">
+    <details class="toc" data-toc hidden>
+      <summary>En este artículo</summary>
+      <ol></ol>
+    </details>
+    <div class="prose">{{ post.content|render_content }}</div>
+
+    <div class="post-actions">
+      {% if user.is_authenticated %}
+        <button class="btn btn-secondary like-btn" type="button" data-like-url="{% url 'likes:toggle' post.id %}" aria-pressed="{% if liked %}true{% else %}false{% endif %}">
+          <svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>
+          <span data-like-label>{% if liked %}Quitar me gusta{% else %}Me gusta{% endif %}</span>
+          <span class="tabular" data-like-count>{{ post.likes_total }}</span>
+        </button>
+      {% else %}
+        <a class="btn btn-secondary" href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>Inicia sesión para dar me gusta <span class="tabular">{{ post.likes_total }}</span></a>
+      {% endif %}
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" type="button" data-share hidden data-title="{{ post.title }}" data-text="{{ post.summary }}" data-url="{{ request.build_absolute_uri }}"><svg class="icon" aria-hidden="true"><use href="#i-share"/></svg>Compartir</button>
+      <button class="btn btn-ghost" type="button" data-copy-link data-url="{{ request.build_absolute_uri }}"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>Copiar enlace</button>
+    </div>
+
+    <section class="comments" id="comentarios" aria-labelledby="comments-title">
+      <h2 id="comments-title">Comentarios (<span data-comment-count>{{ comment_total }}</span>)</h2>
+
+      {% if user.is_authenticated %}
+      <form class="comment-form form" id="comment-form" method="post" action="{% url 'comments:create' post.id %}" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="parent" value="">
+        <div class="reply-note" data-reply-note hidden>
+          <span>Respondiendo a <strong data-reply-name></strong></span>
+          <button class="btn btn-ghost btn-sm" type="button" data-reply-cancel>Cancelar</button>
+        </div>
+        <div class="field" data-field>
+          <label class="label" for="id_content">Tu comentario</label>
+          <textarea class="input" name="content" id="id_content" rows="4" required maxlength="1500" placeholder="Escribe tu comentario" aria-describedby="comment-error"></textarea>
+          <p class="field-error" id="comment-error" role="alert" hidden></p>
+          <p class="help">Los comentarios se publican tras pasar por moderación.</p>
+        </div>
+        <div class="form-actions"><button class="btn btn-primary" type="submit">Publicar comentario</button></div>
+      </form>
+      {% else %}
+      <div class="panel panel--raised" style="margin-bottom: var(--space-10)">
+        <p><a class="link" href="{% url 'accounts:login' %}?next={{ request.path|urlencode }}">Inicia sesión</a> o <a class="link" href="{% url 'accounts:register' %}">crea una cuenta</a> para participar en la conversación.</p>
+      </div>
+      {% endif %}
+
+      <div class="cluster" data-sort-box{% if comment_total < 2 %} hidden{% endif %} style="margin-bottom: var(--space-5)">
+        <span class="text-sm text-secondary">Ordenar:</span>
+        <button class="chip" type="button" data-sort="oldest" aria-pressed="true">Más antiguos</button>
+        <button class="chip" type="button" data-sort="newest" aria-pressed="false">Más recientes</button>
+      </div>
+      <ul class="comment-list" id="comment-list">
+        {% for comment in comments %}{% include "comments/_comment.html" with is_reply=False %}{% endfor %}
+      </ul>
+      {% if not comments %}
+      <div class="empty" id="comments-empty"><h3>Aún no hay comentarios</h3><p>Sé la primera persona en compartir su opinión sobre esta publicación.</p></div>
+      {% endif %}
+    </section>
+  </div>
+</article>
+
+{% if related %}
+<section class="section section--raised" aria-labelledby="related-title">
+  <div class="container">
+    <div class="section-head"><h2 id="related-title">Sigue leyendo en {{ post.category.name }}</h2></div>
+    <div class="grid grid--3">{% for p in related %}{% include "partials/post_card.html" with post=p %}{% endfor %}</div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

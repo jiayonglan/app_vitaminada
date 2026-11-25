@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Contacto · {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="grid grid--2" style="padding-block: var(--space-12) var(--section-y); gap: var(--space-12); align-items: start">
+    <header>
+      <h1>Contacto</h1>
+      <p class="lead" style="margin-top: var(--space-4)">¿Una duda, una idea o un tema que quieras leer? Escríbenos.</p>
+      <p class="text-secondary" style="margin-top: var(--space-6); max-width: 44ch">Leemos todos los mensajes y respondemos al correo que indiques. Los campos marcados son obligatorios.</p>
+    </header>
+    <div class="panel">
+      <form class="form" method="post" novalidate data-validate>
+        {% csrf_token %}
+        {% include "partials/form_errors.html" %}
+        {% for field in form %}{% include "partials/field.html" %}{% endfor %}
+        <div class="form-actions"><button class="btn btn-primary" type="submit">Enviar mensaje</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

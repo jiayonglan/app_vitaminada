@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static ui %}
+{% block title %}{{ SITE_NAME }} · Tecnología, diseño y desarrollo web{% endblock %}
+
+{% block content %}
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <h1 id="hero-title">Tecnología y diseño, explicados sin ruido.</h1>
+      <p class="lead">Guías prácticas de desarrollo web, Django y diseño de interfaces.</p>
+      <p class="hero-desc">Artículos pensados para leer con calma y aplicar el mismo día, con ejemplos que puedes ejecutar y decisiones de diseño explicadas.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{% url 'blog:list' %}">Descubrir publicaciones</a>
+        {% if not user.is_authenticated %}<a class="btn btn-secondary" href="{% url 'accounts:register' %}">Crear cuenta</a>{% endif %}
+      </div>
+    </div>
+    {% if hero_post %}
+    <a class="hero-media" href="{{ hero_post.get_absolute_url }}">
+      {% if hero_post.image %}<img src="{{ hero_post.image.url }}" alt="Portada de «{{ hero_post.title }}»" width="1200" height="675" fetchpriority="high">{% endif %}
+      <span class="hero-caption">
+        <span class="badge" style="justify-self:start">{{ hero_post.category.name }}</span>
+        <strong>{{ hero_post.title }}</strong>
+      </span>
+    </a>
+    {% endif %}
+  </div>
+</section>
+
+{% if slides %}
+<section class="section--tight" aria-labelledby="news-title">
+  <div class="container">
+    <h2 id="news-title" class="sr-only">Novedades</h2>
+    <div class="carousel" data-carousel role="region" aria-roledescription="carrusel" aria-label="Novedades del blog">
+      <div class="carousel-viewport" data-carousel-viewport>
+        <div class="carousel-track" data-carousel-track aria-live="off">
+          {% for slide in slides %}
+          <article class="carousel-slide" data-carousel-slide role="group" aria-roledescription="diapositiva" aria-label="{{ forloop.counter }} de {{ slides|length }}">
+            <img src="{{ slide.image.url }}" alt="" width="1600" height="600"{% if not forloop.first %} loading="lazy"{% endif %}>
+            <div class="slide-body">
+              <h3>{{ slide.title }}</h3>
+              {% if slide.description %}<p>{{ slide.description }}</p>{% endif %}
+              {% if slide.button_text and slide.button_url %}<a class="btn btn-primary" href="{{ slide.button_url }}">{{ slide.button_text }}</a>{% endif %}
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="carousel-controls" data-carousel-controls>
+        <button class="carousel-btn" type="button" data-carousel-prev aria-label="Diapositiva anterior"><svg class="icon" aria-hidden="true"><use href="#i-left"/></svg></button>
+        <div class="carousel-dots" data-carousel-dots></div>
+        <button class="carousel-btn" type="button" data-carousel-next aria-label="Diapositiva siguiente"><svg class="icon" aria-hidden="true"><use href="#i-right"/></svg></button>
+        <button class="carousel-btn" type="button" data-carousel-pause aria-label="Pausar reproducción automática"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg></button>
+      </div>
+      <p class="sr-only" aria-live="polite" data-carousel-live></p>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section" aria-labelledby="featured-title">
+  <div class="container">
+    <div class="section-head">
+      <div><h2 id="featured-title">Publicaciones destacadas</h2><p>Lecturas que merece la pena empezar por aquí.</p></div>
+    </div>
+    {% if featured %}
+      <div class="grid grid--3">{% for p in featured %}{% include "partials/post_card.html" with post=p cta=True %}{% endfor %}</div>
+    {% else %}
+      <div class="empty"><h3>Aún no hay publicaciones destacadas</h3><p>Cuando se marque alguna como destacada aparecerá en esta sección.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section--raised" aria-labelledby="recent-title">
+  <div class="container">
+    <div class="section-head">
+      <div><h2 id="recent-title">Publicaciones recientes</h2></div>
+      <a class="link" href="{% url 'blog:list' %}">Ver todas las publicaciones</a>
+    </div>
+    {% if recent %}
+      <div class="grid grid--2">{% for p in recent %}{% include "partials/post_card.html" with post=p row=True %}{% endfor %}</div>
+    {% else %}
+      <div class="empty"><h3>Todavía no hay publicaciones</h3><p>Vuelve pronto: estamos preparando los primeros artículos.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section" aria-labelledby="cats-title">
+  <div class="container">
+    <div class="section-head">
+      <div><h2 id="cats-title">Explora por categoría</h2></div>
+      <a class="link" href="{% url 'core:categories' %}">Todas las categorías</a>
+    </div>
+    {% if categories %}
+      <div class="grid grid--4">
+        {% for c in categories %}
+        <a class="category-card" href="{% url 'blog:list' %}?categoria={{ c.slug }}">
+          <h3>{{ c.name }}</h3>
+          {% if c.description %}<p>{{ c.description }}</p>{% endif %}
+          <span class="count">{{ c.total }} publicacion{{ c.total|pluralize:"es" }}</span>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty"><h3>No hay categorías con publicaciones</h3><p>Las categorías aparecerán aquí cuando tengan contenido.</p></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section section--raised" aria-labelledby="popular-title">
+  <div class="container container--narrow">
+    <div class="section-head"><div><h2 id="popular-title">Las más populares</h2><p>Ordenadas por número de me gusta.</p></div></div>
+    {% if popular %}
+      <ol class="rank-list">
+        {% for p in popular %}
+        <li><a class="rank-item" href="{{ p.get_absolute_url }}">
+          <span><strong>{{ p.title }}</strong><small>{{ p.category.name }} · {{ p.author|display_name }}</small></span>
+          <span class="rank-likes"><svg class="icon" aria-hidden="true"><use href="#i-heart"/></svg>{{ p.likes_total }}<span class="sr-only"> me gusta</span></span>
+        </a></li>
+        {% endfor %}
+      </ol>
+    {% else %}
+      <div class="empty"><h3>Sin datos todavía</h3><p>Cuando los lectores empiecen a dar me gusta verás aquí las publicaciones más valoradas.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

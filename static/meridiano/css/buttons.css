@@ -1,0 +1,29 @@
+.btn {
+  position: relative; display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  min-height: 44px; padding: 0 var(--space-6); border-radius: var(--radius); border: 1px solid transparent;
+  font-size: var(--fs-body); font-weight: 500; line-height: 1; text-decoration: none; white-space: nowrap;
+  transition: background-color var(--t-fast), border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+}
+.btn:active:not(:disabled) { transform: scale(0.98); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-secondary { background: var(--surface-raised); color: var(--text-primary); border-color: var(--border-default); }
+.btn-secondary:hover { background: var(--surface-base); border-color: var(--text-secondary); }
+.btn-ghost { background: transparent; color: var(--text-secondary); }
+.btn-ghost:hover { background: var(--surface-raised); color: var(--text-primary); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: color-mix(in srgb, var(--danger) 88%, black); }
+.btn-danger-ghost { background: transparent; color: var(--danger); }
+.btn-danger-ghost:hover { background: var(--danger-tint); }
+.btn-sm { min-height: 36px; padding: 0 var(--space-4); font-size: var(--fs-sm); }
+.btn-block { width: 100%; }
+.btn-icon { width: 44px; padding: 0; border-radius: var(--radius-pill); }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.btn[aria-pressed="true"].like-btn { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
+.like-btn[aria-pressed="true"] .icon { fill: currentColor; }
+.btn[aria-busy="true"] { color: transparent; pointer-events: none; }
+.btn[aria-busy="true"]::after {
+  content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid #fff; border-right-color: transparent; animation: spin 0.7s linear infinite;
+}
+.btn-secondary[aria-busy="true"]::after, .btn-ghost[aria-busy="true"]::after { border-color: var(--accent); border-right-color: transparent; }

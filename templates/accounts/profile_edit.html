@@ -1,0 +1,12 @@
+{% extends "accounts/auth_base.html" %}
+{% block auth_page_title %}Editar perfil{% endblock %}
+{% block auth_title %}Editar perfil{% endblock %}
+{% block auth_intro %}Actualiza tus datos. El correo es también tu usuario de acceso.{% endblock %}
+{% block auth_body %}
+<form class="form" method="post" novalidate data-validate>
+  {% csrf_token %}
+  {% include "partials/form_errors.html" %}
+  {% for field in form %}{% include "partials/field.html" %}{% endfor %}
+  <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar cambios</button><a class="btn btn-ghost" href="{% url 'accounts:profile' %}">Cancelar</a></div>
+</form>
+{% endblock %}

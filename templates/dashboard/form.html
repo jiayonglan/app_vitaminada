@@ -1,0 +1,17 @@
+{% extends "dashboard/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block crumbs %}<li><a href="{% url back %}">{% if section == 'posts' %}Publicaciones{% elif section == 'categories' %}Categorías{% else %}Carrusel{% endif %}</a></li><li aria-current="page">{{ title }}</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>{{ title }}</h1></div>
+<div class="panel admin-form">
+  <form class="form" method="post" novalidate data-validate{% if multipart %} enctype="multipart/form-data"{% endif %}>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% for field in form %}
+      {% include "partials/field.html" %}
+      {% if field.name == "image" and object.image %}<img class="thumb-sm" style="width:160px;height:90px;margin-top:calc(var(--space-2) * -1)" src="{{ object.image.url }}" alt="Imagen actual">{% endif %}
+    {% endfor %}
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar</button><a class="btn btn-ghost" href="{% url back %}">Cancelar</a></div>
+  </form>
+</div>
+{% endblock %}

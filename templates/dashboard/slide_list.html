@@ -1,0 +1,36 @@
+{% extends "dashboard/base.html" %}
+{% block title %}Carrusel{% endblock %}
+{% block crumbs %}<li aria-current="page">Carrusel</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Carrusel</h1><a class="btn btn-primary" href="{% url 'dashboard:slide_create' %}"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Nueva diapositiva</a></div>
+{% if slides %}
+<div class="table-wrap">
+  <table class="table" data-slide-table>
+    <thead><tr><th scope="col"><span class="sr-only">Arrastrar</span></th><th scope="col">Imagen</th><th scope="col">Título</th><th scope="col" class="num">Orden</th><th scope="col">Estado</th><th scope="col"><span class="sr-only">Acciones</span></th></tr></thead>
+    <tbody>
+      {% for s in slides %}
+      <tr draggable="true" data-id="{{ s.pk }}" data-url-up="{% url 'dashboard:slide_move' s.pk 'arriba' %}" data-url-down="{% url 'dashboard:slide_move' s.pk 'abajo' %}">
+        <td><span class="drag-handle" aria-hidden="true" title="Arrastra para reordenar"><svg class="icon"><use href="#i-grip"/></svg></span></td>
+        <td><img class="thumb-sm" src="{{ s.image.url }}" alt="" width="72" height="48" loading="lazy" draggable="false"></td>
+        <td><strong class="row-title">{{ s.title }}</strong><div class="text-muted">{{ s.description|truncatechars:60 }}</div></td>
+        <td class="num" data-order>{{ s.order }}</td>
+        <td><span class="badge {% if s.is_active %}badge--success{% else %}badge--muted{% endif %}">{% if s.is_active %}Activa{% else %}Inactiva{% endif %}</span></td>
+        <td><div class="row-actions">
+          <form method="post" action="{% url 'dashboard:slide_move' s.pk 'arriba' %}" class="inline-form" data-move-form="up"{% if forloop.first %} hidden{% endif %}>{% csrf_token %}<button class="btn btn-ghost btn-sm btn-icon" style="width:36px" type="submit" aria-label="Subir {{ s.title }}"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-up"/></svg></button></form>
+          <form method="post" action="{% url 'dashboard:slide_move' s.pk 'abajo' %}" class="inline-form" data-move-form="down"{% if forloop.last %} hidden{% endif %}>{% csrf_token %}<button class="btn btn-ghost btn-sm btn-icon" style="width:36px" type="submit" aria-label="Bajar {{ s.title }}"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-down"/></svg></button></form>
+          <form method="post" action="{% url 'dashboard:slide_toggle' s.pk %}" class="inline-form">{% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">{% if s.is_active %}Desactivar{% else %}Activar{% endif %}<span class="sr-only"> {{ s.title }}</span></button></form>
+          <a class="btn btn-ghost btn-sm" href="{% url 'dashboard:slide_update' s.pk %}"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-edit"/></svg>Editar<span class="sr-only"> {{ s.title }}</span></a>
+          {% url 'dashboard:slide_delete' s.pk as del_url %}
+          {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar diapositiva?" text="Se eliminará la diapositiva del carrusel. Esta acción no se puede deshacer." name=s.title %}
+        </div></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="sr-only" role="status" data-slide-live></p>
+<p class="help">Arrastra las filas o usa las flechas para cambiar el orden: es el orden de la portada. Solo se muestran las diapositivas activas.</p>
+{% else %}
+<div class="empty"><h3>No hay diapositivas</h3><p>Crea la primera para mostrar el carrusel en la portada.</p><a class="btn btn-primary" href="{% url 'dashboard:slide_create' %}">Nueva diapositiva</a></div>
+{% endif %}
+{% endblock %}

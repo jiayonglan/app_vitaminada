@@ -1,0 +1,12 @@
+{% if field.is_hidden %}{{ field }}{% else %}
+<div class="field{% if field.errors %} is-invalid{% endif %}" data-field>
+  {% if field.widget_type == "checkbox" %}
+    <label class="check">{{ field }} <span>{{ field.label }}</span></label>
+  {% else %}
+    <label class="label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="sr-only">(obligatorio)</span>{% endif %}</label>
+    {{ field }}
+  {% endif %}
+  {% if field.help_text %}<p class="help">{{ field.help_text }}</p>{% endif %}
+  <p class="field-error" id="{{ field.id_for_label }}-error"{% if not field.errors %} hidden{% endif %}>{% for e in field.errors %}{{ e }}{% if not forloop.last %} {% endif %}{% endfor %}</p>
+</div>
+{% endif %}

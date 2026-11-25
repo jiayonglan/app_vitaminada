@@ -1,0 +1,23 @@
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  font-weight: 400;
+  color: var(--text-primary);
+  background: var(--surface-base);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 { text-wrap: balance; color: var(--text-primary); }
+h1 { font-size: var(--fs-h1); font-weight: 700; line-height: 1.08; }
+h2 { font-size: var(--fs-h2); font-weight: 700; line-height: 1.12; }
+h3 { font-size: var(--fs-h3); font-weight: 600; line-height: 1.2; }
+h4 { font-size: var(--fs-h4); font-weight: 500; line-height: 1.25; }
+p { text-wrap: pretty; }
+.lead { font-size: var(--fs-lead); font-weight: 500; line-height: 1.35; color: var(--text-secondary); }
+.text-sm { font-size: var(--fs-sm); }
+.text-caption { font-size: var(--fs-caption); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.tabular { font-variant-numeric: tabular-nums; }
+.link { color: var(--accent); text-decoration: none; font-weight: 500; }
+.link:hover { color: var(--accent-hover); text-decoration: underline; text-underline-offset: 3px; }

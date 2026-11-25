@@ -1,0 +1,4 @@
+<form method="post" action="{{ action }}" class="inline-form"{% if ajax %} data-ajax-row{% endif %} data-confirm="{{ text }}" data-confirm-title="{{ title }}" data-confirm-label="Eliminar">
+  {% csrf_token %}
+  <button class="btn btn-danger-ghost btn-sm" type="submit"><svg class="icon" aria-hidden="true" width="16" height="16"><use href="#i-trash"/></svg>Eliminar<span class="sr-only"> {{ name }}</span></button>
+</form>

@@ -1,0 +1,38 @@
+{% extends "dashboard/base.html" %}
+{% load ui %}
+{% block title %}Imágenes{% endblock %}
+{% block crumbs %}<li aria-current="page">Imágenes</li>{% endblock %}
+{% block content %}
+<div class="admin-title"><h1>Imágenes</h1></div>
+<section class="panel admin-form" aria-labelledby="upload-title">
+  <h2 id="upload-title">Subir una imagen</h2>
+  <form class="form" method="post" enctype="multipart/form-data" novalidate data-validate>
+    {% csrf_token %}
+    {% include "partials/form_errors.html" %}
+    {% for field in form %}{% include "partials/field.html" %}{% endfor %}
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Subir imagen</button></div>
+  </form>
+</section>
+{% if page.object_list %}
+<ul class="thumb-grid">
+  {% for img in page.object_list %}
+  <li class="thumb-card">
+    <img src="{{ img.image.url }}" alt="{{ img.alt_text }}" width="900" height="600" loading="lazy">
+    <div class="body">
+      <strong>{{ img.title }}</strong>
+      {% if img.description %}<span class="text-secondary">{{ img.description }}</span>{% endif %}
+      <span class="text-muted">Alt: {{ img.alt_text }}</span>
+      <span class="text-muted">{{ img.created_at|date:"j M Y" }} · {% if img.uploaded_by %}{{ img.uploaded_by|display_name }}{% else %}—{% endif %}</span>
+    </div>
+    <div class="foot">
+      {% url 'dashboard:image_delete' img.pk as del_url %}
+      {% include "dashboard/_delete.html" with action=del_url title="¿Eliminar imagen?" text="Se eliminará la imagen de la galería. Esta acción no se puede deshacer." name=img.title %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% include "partials/pagination.html" %}
+{% else %}
+<div class="empty"><h3>La galería está vacía</h3><p>Sube una imagen con el formulario de arriba.</p></div>
+{% endif %}
+{% endblock %}
