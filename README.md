@@ -15,7 +15,7 @@ python manage.py seed             # 8 categorías, 25 posts, 50 comentarios, 3 u
 python manage.py runserver
 ```
 
-PostgreSQL: crea la base de datos `apple_blog` y ajusta `DB_*` en las variables de entorno.
+PostgreSQL: crea la base de datos `app_vitaminada` y ajusta `DB_*` en las variables de entorno.
 Para probar sin PostgreSQL: `USE_SQLITE=1 python manage.py migrate` (y lo mismo con `seed` y `runserver`).
 
 Accesos de ejemplo:
